@@ -1,0 +1,37 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "x402-mcp-chain-query",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-06-11",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "UPSTREAM_API_BASE": "http://127.0.0.1:4021",
+    "PAY_TO": "0xc8aaea11c93a438e2fc7bd5cddb9a6936ed3595c",
+    "FREE_TRIAL_N": "10"
+  },
+  // Secrets (set via `wrangler secret put` / `.dev.vars` — never commit):
+  // CDP_API_KEY_ID, CDP_API_KEY_SECRET
+  "durable_objects": {
+    "bindings": [
+      {
+        "class_name": "ChainQueryMCP",
+        "name": "MCP"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["ChainQueryMCP"]
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "TRIAL_KV",
+      // Replace with a real id from `wrangler kv namespace create TRIAL_KV` before deploy.
+      // Local `wrangler dev` works with this placeholder.
+      "id": "00000000000000000000000000000000",
+      "preview_id": "00000000000000000000000000000000"
+    }
+  ]
+}

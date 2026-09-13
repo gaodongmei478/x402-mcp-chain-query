@@ -1,0 +1,105 @@
+# x402-mcp-chain-query
+
+Cloudflare Workers **remote MCP** server that exposes Base mainnet chain query tools with **x402** payments, using the Agents SDK (`McpAgent` + `withX402` + `paidTool`).
+
+Follows [Charge for MCP tools](https://developers.cloudflare.com/agents/tools/payments/x402/charge-for-mcp-tools/) and the [x402-mcp example](https://github.com/cloudflare/agents/tree/main/examples/x402-mcp), but uses the **CDP facilitator** for Base mainnet — **never** `x402.org` for mainnet / real funds.
+
+## Tools
+
+| Tool | Price | Notes |
+|------|-------|--------|
+| `health` | free (`server.tool`) | Proxies `GET /health` on upstream |
+| `chain_balance` | **$0.01** (`paidTool`) | Proxies `GET /balance?address=` — MVP rejects `chainId !== 8453` and non-native token |
+| `chain_gas` | **$0.01** (`paidTool`) | Proxies `GET /gas?urgency=` — urgency enum `slow\|standard\|fast` **passed through as-is** (no low/medium/high mapping) |
+
+**payTo / recipient:** `0xc8aaea11c93a438e2fc7bd5cddb9a6936ed3595c`  
+**network:** `base` (mainnet → `eip155:8453`)  
+**facilitator:** `https://api.cdp.coinbase.com/platform/v2/x402`
+
+### Output fields
+
+- **chain_balance:** `address`, `chainId`, `token`, `symbol`, `decimals`, `balance`, `balanceFormatted`, `asOf` (when present)
+- **chain_gas:** `baseFeePerGas`, `maxPriorityFeePerGas`, `maxFeePerGas`, `gasPrice`, `urgency` (MCP enum), `asOf`
+
+## Free trial (N=10)
+
+Documented allotment: **10** free uses per payer (`FREE_TRIAL_N`).
+
+- Best-effort **KV** counter (`TRIAL_KV`) keyed by payer address (observability / remaining).
+- MCP `paidTool` still requires x402 payment before the handler runs; a true MCP-side free bypass is **TODO**.
+- Upstream seller receives `x-wallet-address` header and/or `?payer=` so it can grant its own free trials.
+
+## Upstream
+
+Default `UPSTREAM_API_BASE=http://127.0.0.1:4021` (e.g. the companion Express `x402-chain-query` seller).
+
+| Method | Path | Auth |
+|--------|------|------|
+| GET | `/health` | none |
+| GET | `/balance?address=` | none (x402 at MCP / seller layer) |
+| GET | `/gas?urgency=` | none — urgency `slow\|standard\|fast` passthrough |
+
+No upstream API key.
+
+## Setup
+
+```bash
+cd /workspace/x402-mcp-chain-query
+cp .dev.vars.example .dev.vars
+# Edit .dev.vars — add CDP_API_KEY_ID / CDP_API_KEY_SECRET (never commit)
+npm install
+```
+
+### Environment variables
+
+| Variable | Required | Default | Purpose |
+|----------|----------|---------|---------|
+| `UPSTREAM_API_BASE` | no | `http://127.0.0.1:4021` | Upstream chain-query HTTP API |
+| `CDP_API_KEY_ID` | for settle | — | CDP Facilitator JWT (secret) |
+| `CDP_API_KEY_SECRET` | for settle | — | CDP Facilitator JWT (secret) |
+| `PAY_TO` | no | `0xc8aaea11c93a438e2fc7bd5cddb9a6936ed3595c` | x402 payment recipient |
+| `FREE_TRIAL_N` | no | `10` | Documented trial allotment / KV counter limit |
+
+**Do not commit secrets.** Use `.dev.vars` locally and `wrangler secret put CDP_API_KEY_ID` / `CDP_API_KEY_SECRET` in production.
+
+## Local development
+
+Start the upstream seller on `:4021` if you want live tool results, then:
+
+```bash
+npm run dev
+# → wrangler dev (MCP at http://localhost:8787/mcp by default)
+```
+
+Typecheck:
+
+```bash
+npm run typecheck
+```
+
+Connect MCP Inspector or another client to `http://localhost:8787/mcp`.
+
+## Mainnet / CDP warning
+
+- This project targets **Base mainnet** and the **CDP facilitator**.
+- **Never** point mainnet payments at `https://x402.org/facilitator` (test facilitator).
+- Without `CDP_API_KEY_ID` / `CDP_API_KEY_SECRET`, payment requirements can still be advertised, but **verify/settle will fail**.
+- Do not deploy or settle real payments from this scaffold until keys and `PAY_TO` are intentional.
+
+## Deploy (not done by scaffold)
+
+```bash
+npx wrangler kv namespace create TRIAL_KV   # put real id into wrangler.jsonc
+npx wrangler secret put CDP_API_KEY_ID
+npx wrangler secret put CDP_API_KEY_SECRET
+# npm run deploy   # only when you intend to ship
+```
+
+## Stack
+
+- `agents` — `McpAgent`, `agents/x402` (`withX402`, `paidTool`)
+- `@modelcontextprotocol/sdk` — `McpServer`
+- `zod` — tool input schemas
+- `@coinbase/cdp-sdk` — CDP JWT for facilitator `createAuthHeaders`
+- `@x402/core` / `@x402/evm` — peer deps of `agents/x402`
+- `wrangler` — Workers / Durable Objects / KV

@@ -1,0 +1,7 @@
+# Copy to .dev.vars for local wrangler dev (never commit real secrets)
+CDP_API_KEY_ID=
+CDP_API_KEY_SECRET=
+# Optional overrides (also settable via wrangler.jsonc vars)
+# UPSTREAM_API_BASE=http://127.0.0.1:4021
+# PAY_TO=0xc8aaea11c93a438e2fc7bd5cddb9a6936ed3595c
+# FREE_TRIAL_N=10
