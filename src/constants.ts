@@ -3,9 +3,11 @@ export const NETWORK = "base" as const;
 export const NETWORK_CAIP2 = "eip155:8453" as const;
 export const BASE_CHAIN_ID = 8453;
 
-/** CDP hosted facilitator — NEVER x402.org for mainnet / real funds. */
-export const CDP_FACILITATOR_URL =
-  "https://api.cdp.coinbase.com/platform/v2/x402";
+/**
+ * PayAI facilitator (no API key) — aligned with API seller desk.
+ * NEVER use https://x402.org/facilitator for mainnet / real funds.
+ */
+export const PAYAI_FACILITATOR_URL = "https://facilitator.payai.network";
 
 /** Locked payTo / recipient (overridable via PAY_TO env). */
 export const DEFAULT_PAY_TO =

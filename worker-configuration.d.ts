@@ -8,7 +8,6 @@ interface Env {
   UPSTREAM_API_BASE: string;
   PAY_TO: string;
   FREE_TRIAL_N: string;
-  /** CDP Facilitator JWT auth — set via wrangler secret / .dev.vars */
-  CDP_API_KEY_ID?: string;
-  CDP_API_KEY_SECRET?: string;
+  /** PayAI facilitator by default; override if needed — never x402.org for real money */
+  FACILITATOR_URL?: string;
 }

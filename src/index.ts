@@ -5,7 +5,7 @@
  * Docs: https://developers.cloudflare.com/agents/tools/payments/x402/charge-for-mcp-tools/
  * Example: https://github.com/cloudflare/agents/tree/main/examples/x402-mcp
  *
- * Facilitator: CDP https://api.cdp.coinbase.com/platform/v2/x402 (never x402.org on mainnet).
+ * Facilitator: PayAI https://facilitator.payai.network (no API key; never x402.org on mainnet).
  */
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { McpAgent } from "agents/mcp";
@@ -17,7 +17,7 @@ import {
   PRICE_USD,
   URGENCY_VALUES,
 } from "./constants.js";
-import { buildCdpFacilitatorConfig } from "./facilitator.js";
+import { buildFacilitatorConfig } from "./facilitator.js";
 import {
   freeTrialLimit,
   normalizePayerKey,
@@ -42,19 +42,19 @@ function resolvePayTo(): `0x${string}` {
   return addr as `0x${string}`;
 }
 
-function resolveCdpKeys(): { apiKeyId?: string; apiKeySecret?: string } {
-  const env = typeof process !== "undefined" ? process.env : undefined;
-  return {
-    apiKeyId: env?.CDP_API_KEY_ID,
-    apiKeySecret: env?.CDP_API_KEY_SECRET,
-  };
+function resolveFacilitatorUrl(env?: { FACILITATOR_URL?: string }): string | undefined {
+  const fromEnv =
+    env?.FACILITATOR_URL?.trim() ||
+    (typeof process !== "undefined" && process.env?.FACILITATOR_URL?.trim()) ||
+    undefined;
+  return fromEnv || undefined;
 }
 
 const X402_CONFIG: X402Config = {
   // "base" → eip155:8453 via agents/x402 normalizeNetwork
   network: NETWORK,
   recipient: resolvePayTo(),
-  facilitator: buildCdpFacilitatorConfig(resolveCdpKeys()),
+  facilitator: buildFacilitatorConfig({ baseUrl: resolveFacilitatorUrl() }),
 };
 
 function textResult(payload: unknown, isError = false) {
@@ -282,7 +282,7 @@ export default {
           chain_gas: `$${PRICE_USD}`,
         },
         freeTrialN: freeTrialLimit(env),
-        facilitator: "https://api.cdp.coinbase.com/platform/v2/x402",
+        facilitator: env.FACILITATOR_URL || "https://facilitator.payai.network",
       });
     }
 

@@ -2,7 +2,7 @@
 
 Cloudflare Workers **remote MCP** server that exposes Base mainnet chain query tools with **x402** payments, using the Agents SDK (`McpAgent` + `withX402` + `paidTool`).
 
-Follows [Charge for MCP tools](https://developers.cloudflare.com/agents/tools/payments/x402/charge-for-mcp-tools/) and the [x402-mcp example](https://github.com/cloudflare/agents/tree/main/examples/x402-mcp), but uses the **CDP facilitator** for Base mainnet — **never** `x402.org` for mainnet / real funds.
+Follows [Charge for MCP tools](https://developers.cloudflare.com/agents/tools/payments/x402/charge-for-mcp-tools/) and the [x402-mcp example](https://github.com/cloudflare/agents/tree/main/examples/x402-mcp), but uses the **PayAI facilitator** (`https://facilitator.payai.network`, no API key) — **never** `x402.org` for mainnet / real funds.
 
 ## Tools
 
@@ -46,7 +46,7 @@ No upstream API key.
 ```bash
 cd /workspace/x402-mcp-chain-query
 cp .dev.vars.example .dev.vars
-# Edit .dev.vars — add CDP_API_KEY_ID / CDP_API_KEY_SECRET (never commit)
+# Edit .dev.vars if needed (PayAI needs no keys; never commit secrets)
 npm install
 ```
 
@@ -55,12 +55,11 @@ npm install
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
 | `UPSTREAM_API_BASE` | no | `http://127.0.0.1:4021` | Upstream chain-query HTTP API |
-| `CDP_API_KEY_ID` | for settle | — | CDP Facilitator JWT (secret) |
-| `CDP_API_KEY_SECRET` | for settle | — | CDP Facilitator JWT (secret) |
+| `FACILITATOR_URL` | no | `https://facilitator.payai.network` | x402 facilitator (PayAI; never x402.org for real money) |
 | `PAY_TO` | no | `0xc8aaea11c93a438e2fc7bd5cddb9a6936ed3595c` | x402 payment recipient |
 | `FREE_TRIAL_N` | no | `10` | Documented trial allotment / KV counter limit |
 
-**Do not commit secrets.** Use `.dev.vars` locally and `wrangler secret put CDP_API_KEY_ID` / `CDP_API_KEY_SECRET` in production.
+**Do not commit secrets.** PayAI facilitator needs no API key. Use `.dev.vars` locally for overrides.
 
 ## Local development
 
@@ -83,15 +82,13 @@ Connect MCP Inspector or another client to `http://localhost:8787/mcp`.
 
 - This project targets **Base mainnet** and the **CDP facilitator**.
 - **Never** point mainnet payments at `https://x402.org/facilitator` (test facilitator).
-- Without `CDP_API_KEY_ID` / `CDP_API_KEY_SECRET`, payment requirements can still be advertised, but **verify/settle will fail**.
+- Facilitator defaults to PayAI (no API key). Still **never** point mainnet at `https://x402.org/facilitator`.
 - Do not deploy or settle real payments from this scaffold until keys and `PAY_TO` are intentional.
 
 ## Deploy (not done by scaffold)
 
 ```bash
 npx wrangler kv namespace create TRIAL_KV   # put real id into wrangler.jsonc
-npx wrangler secret put CDP_API_KEY_ID
-npx wrangler secret put CDP_API_KEY_SECRET
 # npm run deploy   # only when you intend to ship
 ```
 
