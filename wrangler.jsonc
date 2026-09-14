@@ -28,10 +28,8 @@
   "kv_namespaces": [
     {
       "binding": "TRIAL_KV",
-      // Replace with a real id from `wrangler kv namespace create TRIAL_KV` before deploy.
-      // Local `wrangler dev` works with this placeholder.
-      "id": "00000000000000000000000000000000",
-      "preview_id": "00000000000000000000000000000000"
+      "id": "7d385755c4f14c79b7e7da54bede573a",
+      "preview_id": "fb3cbe3577ad46d4b81e1981b9595580"
     }
   ]
 }
