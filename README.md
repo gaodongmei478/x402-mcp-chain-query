@@ -4,6 +4,37 @@ Cloudflare Workers **remote MCP** server that exposes Base mainnet chain query t
 
 Follows [Charge for MCP tools](https://developers.cloudflare.com/agents/tools/payments/x402/charge-for-mcp-tools/) and the [x402-mcp example](https://github.com/cloudflare/agents/tree/main/examples/x402-mcp), but uses the **PayAI facilitator** (`https://facilitator.payai.network`, no API key) — **never** `x402.org` for mainnet / real funds.
 
+
+## Connect in Cursor (one-paste)
+
+Live MCP (temporary Worker — renew via claim/ops as needed):
+
+`https://x402-mcp-chain-query.solid-weight.workers.dev/mcp`
+
+Paste into Cursor **Customize → MCP** / project `.cursor/mcp.json` / user `~/.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "x402-chain-query": {
+      "url": "https://x402-mcp-chain-query.solid-weight.workers.dev/mcp"
+    }
+  }
+}
+```
+
+Docs: [Cursor MCP](https://cursor.com/docs/mcp)
+
+### Companion HTTP seller (optional)
+
+Same stack, raw HTTP (not MCP):
+
+- Base: `https://x402-chain-query.solid-weight.workers.dev`
+- `GET /health` free · `GET /balance` · `GET /gas`
+- **$0.01** USDC · trial **N=10** (upstream) · **PayAI** facilitator · **Base** (`eip155:8453`)
+- `payTo`: `0xc8aaea11c93a438e2fc7bd5cddb9a6936ed3595c`
+
+
 ## Tools
 
 | Tool | Price | Notes |
@@ -14,7 +45,7 @@ Follows [Charge for MCP tools](https://developers.cloudflare.com/agents/tools/pa
 
 **payTo / recipient:** `0xc8aaea11c93a438e2fc7bd5cddb9a6936ed3595c`  
 **network:** `base` (mainnet → `eip155:8453`)  
-**facilitator:** `https://api.cdp.coinbase.com/platform/v2/x402`
+**facilitator:** `https://facilitator.payai.network` (PayAI, no API key)
 
 ### Output fields
 
@@ -31,7 +62,7 @@ Documented allotment: **10** free uses per payer (`FREE_TRIAL_N`).
 
 ## Upstream
 
-Default `UPSTREAM_API_BASE=http://127.0.0.1:4021` (e.g. the companion Express `x402-chain-query` seller).
+Default / live temporary seller: `UPSTREAM_API_BASE=https://x402-chain-query.solid-weight.workers.dev` (companion `x402-chain-query`; local `:4021` still OK for dev).
 
 | Method | Path | Auth |
 |--------|------|------|
@@ -54,7 +85,7 @@ npm install
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
-| `UPSTREAM_API_BASE` | no | `http://127.0.0.1:4021` | Upstream chain-query HTTP API |
+| `UPSTREAM_API_BASE` | no | `https://x402-chain-query.solid-weight.workers.dev` | Upstream chain-query HTTP API |
 | `FACILITATOR_URL` | no | `https://facilitator.payai.network` | x402 facilitator (PayAI; never x402.org for real money) |
 | `PAY_TO` | no | `0xc8aaea11c93a438e2fc7bd5cddb9a6936ed3595c` | x402 payment recipient |
 | `FREE_TRIAL_N` | no | `10` | Documented trial allotment / KV counter limit |
