@@ -5,7 +5,7 @@
   "compatibility_date": "2026-06-11",
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
-    "UPSTREAM_API_BASE": "http://127.0.0.1:4021",
+    "UPSTREAM_API_BASE": "https://x402-chain-query.solid-weight.workers.dev",
     "PAY_TO": "0xc8aaea11c93a438e2fc7bd5cddb9a6936ed3595c",
     "FREE_TRIAL_N": "10",
     "FACILITATOR_URL": "https://facilitator.payai.network"

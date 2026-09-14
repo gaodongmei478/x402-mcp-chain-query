@@ -74,7 +74,7 @@ function upstreamBase(env: Env): string {
   return (
     env.UPSTREAM_API_BASE?.trim() ||
     (typeof process !== "undefined" && process.env?.UPSTREAM_API_BASE) ||
-    "http://127.0.0.1:4021"
+    "https://x402-chain-query.solid-weight.workers.dev"
   );
 }
 
@@ -275,7 +275,7 @@ export default {
         mcp: "/mcp",
         network: NETWORK,
         payTo: env.PAY_TO || DEFAULT_PAY_TO,
-        upstream: env.UPSTREAM_API_BASE || "http://127.0.0.1:4021",
+        upstream: env.UPSTREAM_API_BASE || "https://x402-chain-query.solid-weight.workers.dev",
         tools: {
           health: "free",
           chain_balance: `$${PRICE_USD}`,
