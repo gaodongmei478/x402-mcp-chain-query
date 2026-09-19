@@ -9,7 +9,7 @@ Follows [Charge for MCP tools](https://developers.cloudflare.com/agents/tools/pa
 
 Live MCP (temporary Worker — renew via claim/ops as needed):
 
-`https://x402-mcp-chain-query.solid-weight.workers.dev/mcp`
+`https://x402-mcp-chain-query.marshy-shake.workers.dev/mcp`
 
 Paste into Cursor **Customize → MCP** / project `.cursor/mcp.json` / user `~/.cursor/mcp.json`:
 
@@ -17,7 +17,7 @@ Paste into Cursor **Customize → MCP** / project `.cursor/mcp.json` / user `~/.
 {
   "mcpServers": {
     "x402-chain-query": {
-      "url": "https://x402-mcp-chain-query.solid-weight.workers.dev/mcp"
+      "url": "https://x402-mcp-chain-query.marshy-shake.workers.dev/mcp"
     }
   }
 }
@@ -29,7 +29,7 @@ Docs: [Cursor MCP](https://cursor.com/docs/mcp)
 
 Same stack, raw HTTP (not MCP):
 
-- Base: `https://x402-chain-query.solid-weight.workers.dev`
+- Base: `https://x402-chain-query.marshy-shake.workers.dev`
 - `GET /health` free · `GET /balance` · `GET /gas`
 - **$0.01** USDC · trial **N=10** (upstream) · **PayAI** facilitator · **Base** (`eip155:8453`)
 - `payTo`: `0xc8aaea11c93a438e2fc7bd5cddb9a6936ed3595c`
@@ -62,7 +62,7 @@ Documented allotment: **10** free uses per payer (`FREE_TRIAL_N`).
 
 ## Upstream
 
-Default / live temporary seller: `UPSTREAM_API_BASE=https://x402-chain-query.solid-weight.workers.dev` (companion `x402-chain-query`; local `:4021` still OK for dev).
+Default / live temporary seller: `UPSTREAM_API_BASE=https://x402-chain-query.marshy-shake.workers.dev` (companion `x402-chain-query`; local `:4021` still OK for dev).
 
 | Method | Path | Auth |
 |--------|------|------|
@@ -85,7 +85,7 @@ npm install
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
-| `UPSTREAM_API_BASE` | no | `https://x402-chain-query.solid-weight.workers.dev` | Upstream chain-query HTTP API |
+| `UPSTREAM_API_BASE` | no | `https://x402-chain-query.marshy-shake.workers.dev` | Upstream chain-query HTTP API |
 | `FACILITATOR_URL` | no | `https://facilitator.payai.network` | x402 facilitator (PayAI; never x402.org for real money) |
 | `PAY_TO` | no | `0xc8aaea11c93a438e2fc7bd5cddb9a6936ed3595c` | x402 payment recipient |
 | `FREE_TRIAL_N` | no | `10` | Documented trial allotment / KV counter limit |
