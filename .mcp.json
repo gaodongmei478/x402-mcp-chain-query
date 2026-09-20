@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "x402-chain-query": {
-      "url": "https://x402-mcp-chain-query.dawn-cloudberry.workers.dev/mcp"
+      "url": "https://x402-mcp-chain-query.picturesque-squash.workers.dev/mcp"
     }
   }
 }
