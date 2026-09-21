@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "x402-chain-query": {
-      "url": "https://x402-mcp-chain-query.dawn-lantana.workers.dev/mcp"
+      "url": "https://x402-mcp-chain-query.platinum-slipper-dda.workers.dev/mcp"
     }
   }
 }
